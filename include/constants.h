@@ -8,5 +8,6 @@ constexpr int MAX_DEPTH = 50;
 constexpr float INF = 1e30f;
 constexpr float EPS = 1e-4f;
 constexpr float ROULETTE = 0.95f;
+constexpr bool ENABLE_RAY_COUNTING = true;
 
 #endif // CONSTANTS_H
