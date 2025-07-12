@@ -30,20 +30,21 @@ struct alignas(64) AABB {
 
     // Ray-box intersection using slabs method and NEON vectors
     bool intersect(const Ray& r, float& tmin_out, float& tmax_out) const {
-        float32x4_t omin = vld1q_f32(&min.x);
-        float32x4_t omax = vld1q_f32(&max.x);
+        // Use the pre-computed inverse direction from the Ray struct
+        float32x4_t inv_d = vld1q_f32(&r.inv_d.x);
         float32x4_t ro = vld1q_f32(&r.o.x);
-        float32x4_t rd = vld1q_f32(&r.d.x);
-        float32x4_t inv_d = vdivq_f32(vdupq_n_f32(1.0f), rd);
 
-        float32x4_t t1 = vmulq_f32(vsubq_f32(omin, ro), inv_d);
-        float32x4_t t2 = vmulq_f32(vsubq_f32(omax, ro), inv_d);
+        float32x4_t t1 = vmulq_f32(vsubq_f32(vld1q_f32(&min.x), ro), inv_d);
+        float32x4_t t2 = vmulq_f32(vsubq_f32(vld1q_f32(&max.x), ro), inv_d);
 
         float32x4_t tmin_vec = vminq_f32(t1, t2);
         float32x4_t tmax_vec = vmaxq_f32(t1, t2);
+        
+        float32x2_t xy_min = vget_low_f32(tmin_vec);
+        float tmin = std::max(vget_lane_f32(vpmax_f32(xy_min, xy_min), 0), vgetq_lane_f32(tmin_vec, 2));
 
-        float tmin = std::max({vgetq_lane_f32(tmin_vec,0), vgetq_lane_f32(tmin_vec,1), vgetq_lane_f32(tmin_vec,2)});
-        float tmax = std::min({vgetq_lane_f32(tmax_vec,0), vgetq_lane_f32(tmax_vec,1), vgetq_lane_f32(tmax_vec,2)});
+        float32x2_t xy_max = vget_low_f32(tmax_vec);
+        float tmax = std::min(vget_lane_f32(vpmin_f32(xy_max, xy_max), 0), vgetq_lane_f32(tmax_vec, 2));
 
         tmin = std::max(0.f, tmin);
         tmax = std::min(INF, tmax);
