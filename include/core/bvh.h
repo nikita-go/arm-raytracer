@@ -7,11 +7,12 @@
 #include <algorithm>
 #include <cstdlib>
 
-// BVH Node with SAH
+// BVHNode represents a node in a Bounding Volume Hierarchy tree for efficient ray tracing
 class BVHNode : public Hitable {
     std::shared_ptr<Hitable> left, right;
     AABB box;
 
+    // Static helper function to compare Hitable objects for sorting
     static bool box_compare(const std::shared_ptr<Hitable>& a, const std::shared_ptr<Hitable>& b, int axis);
 
 public:
