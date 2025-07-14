@@ -20,7 +20,7 @@ public:
     bool hit(const Ray& r, float t_min, float t_max, HitRecord& rec) const override;
     AABB bounding_box() const override;
     float pdf_value(const Vec3& o, const Vec3& v) const override;
-    Vec3 random(const Vec3& o) const override;
+    Vec3 random(const Vec3& o, Xoshiro128PlusPlus& rng) const override;
 };
 
 #endif // BVH_H

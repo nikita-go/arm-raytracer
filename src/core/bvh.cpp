@@ -86,7 +86,7 @@ float BVHNode::pdf_value(const Vec3& o, const Vec3& v) const {
 }
 
 // Generate a random direction for importance sampling
-Vec3 BVHNode::random(const Vec3& o) const {
-    if (drand48() < 0.5f) return left->random(o);
-    return right->random(o);
+Vec3 BVHNode::random(const Vec3& o, Xoshiro128PlusPlus& rng) const {
+    if (rng.rand_float() < 0.5f) return left->random(o, rng);
+    return right->random(o, rng);
 }
