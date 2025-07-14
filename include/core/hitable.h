@@ -2,6 +2,7 @@
 #define HITABLE_H
 
 #include "utils/ray.h"
+#include "utils/rng.h"
 #include "core/aabb.h"
 #include <memory>
 
@@ -30,8 +31,8 @@ public:
         return 0;
     }
 
-    virtual Vec3 random(const Vec3& o) const {
-        return Vec3(1,0,0);
+    virtual Vec3 random(const Vec3& o, Xoshiro128PlusPlus& rng) const {
+        return Vec3(1, 0, 0);
     }
 };
 
